@@ -22,9 +22,9 @@
 
   <meta name="description" content="常用的编程语言Python、C++，最近在忙的事WEB后端开发、刷算法、做毕设">
 <meta property="og:type" content="website">
-<meta property="og:title" content="JULY SKY">
+<meta property="og:title" content="OCT SKY">
 <meta property="og:url" content="http://yoursite.com/index.html">
-<meta property="og:site_name" content="JULY SKY">
+<meta property="og:site_name" content="OCT SKY">
 <meta property="og:description" content="常用的编程语言Python、C++，最近在忙的事WEB后端开发、刷算法、做毕设">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:author" content="songqing-li">
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>JULY SKY</title>
+  <title>OCT SKY</title>
   
 
 
@@ -77,7 +77,7 @@
   </style>
 </noscript>
 
-<link rel="alternate" href="/atom.xml" title="JULY SKY" type="application/atom+xml">
+<link rel="alternate" href="/atom.xml" title="OCT SKY" type="application/atom+xml">
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
@@ -99,7 +99,7 @@
     <div>
       <a href="/" class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">JULY SKY</span>
+        <span class="site-title">OCT SKY</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
@@ -196,6 +196,337 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/09/pytricks-5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="songqing-li">
+      <meta itemprop="description" content="常用的编程语言Python、C++，最近在忙的事WEB后端开发、刷算法、做毕设">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="OCT SKY">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/03/09/pytricks-5/" class="post-title-link" itemprop="url">python中的装饰器</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-03-09 16:57:32 / 修改时间：16:59:26" itemprop="dateCreated datePublished" datetime="2020-03-09T16:57:32+08:00">2020-03-09</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/python-tricks/" itemprop="url" rel="index"><span itemprop="name">python tricks</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/python-tricks/python%E8%BF%9B%E9%98%B6/" itemprop="url" rel="index"><span itemprop="name">python进阶</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="装饰器"><a href="#装饰器" class="headerlink" title="装饰器"></a>装饰器</h2><blockquote>
+<h4 id="Python装饰器的应用"><a href="#Python装饰器的应用" class="headerlink" title="Python装饰器的应用"></a>Python装饰器的应用</h4><p>将通用的功能（日志，访问控制和授权，缓存等等）应用到现有的可调用对象如类或函数，同时又不会永久修改可调用对象本身。</p>
+<h4 id="理解装饰器前要了解的函数特性"><a href="#理解装饰器前要了解的函数特性" class="headerlink" title="理解装饰器前要了解的函数特性"></a>理解装饰器前要了解的函数特性</h4><ul>
+<li><strong>函数是对象</strong>，可以分配给变量并传递给其他函数，以及从其他函数返回；</li>
+</ul>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">1</span>]: <span class="function"><span class="keyword">def</span> <span class="title">text_style</span><span class="params">(text)</span>:</span></span><br><span class="line">   ...:     <span class="keyword">return</span> text.lower() + <span class="string">'!'</span></span><br><span class="line">   ...:</span><br><span class="line"></span><br><span class="line">In [<span class="number">2</span>]: text_style(<span class="string">'Hello'</span>)</span><br><span class="line">Out[<span class="number">2</span>]: <span class="string">'hello!'</span></span><br><span class="line"><span class="comment">#将函数text_style赋值给变量var</span></span><br><span class="line">In [<span class="number">3</span>]: var = text_style</span><br><span class="line"></span><br><span class="line">In [<span class="number">4</span>]: var(<span class="string">'Hello'</span>)</span><br><span class="line">Out[<span class="number">4</span>]: <span class="string">'hello!'</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">5</span>]: <span class="function"><span class="keyword">def</span> <span class="title">greet</span><span class="params">(func)</span>:</span></span><br><span class="line">   ...:     greeting = func(<span class="string">'I like python.'</span>)</span><br><span class="line">   ...:     print(greeting)</span><br><span class="line">   ...:</span><br><span class="line"><span class="comment">#将函数text_style作为参数传递给函数greet</span></span><br><span class="line">In [<span class="number">6</span>]: greet(text_style)</span><br><span class="line">i like python.!</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/03/09/pytricks-5/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/09/pytricks-4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="songqing-li">
+      <meta itemprop="description" content="常用的编程语言Python、C++，最近在忙的事WEB后端开发、刷算法、做毕设">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="OCT SKY">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/03/09/pytricks-4/" class="post-title-link" itemprop="url">python中的生成器</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-03-09 16:55:24 / 修改时间：16:57:15" itemprop="dateCreated datePublished" datetime="2020-03-09T16:55:24+08:00">2020-03-09</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/python-tricks/" itemprop="url" rel="index"><span itemprop="name">python tricks</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/python-tricks/python%E8%BF%9B%E9%98%B6/" itemprop="url" rel="index"><span itemprop="name">python进阶</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h4 id="生成器是什么？"><a href="#生成器是什么？" class="headerlink" title="生成器是什么？"></a>生成器是什么？</h4><blockquote>
+<p><strong>生成器是简化版的迭代器</strong>。生成器函数是一种语法糖，用于编写支持迭代器协议的对象。与编写基于类的迭代器相比，生成器能抽象出许多样板代码。</p>
+</blockquote>
+<p><strong>迭代器相关内容</strong>：<a href="https://blog.csdn.net/sinat_43113415/article/details/103250371" target="_blank" rel="noopener">python中的迭代器</a></p>
+<h4 id="生成器函数"><a href="#生成器函数" class="headerlink" title="生成器函数"></a>生成器函数</h4><p><strong>无限生成器</strong></p>
+<blockquote>
+<p><strong>基于类的无限循环的迭代器</strong><br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Repeater</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, value)</span>:</span></span><br><span class="line">        self.value = value</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__iter__</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> self</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__next__</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> self.value</span><br></pre></td></tr></table></figure><br>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/03/09/pytricks-4/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/09/pytricks-3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="songqing-li">
+      <meta itemprop="description" content="常用的编程语言Python、C++，最近在忙的事WEB后端开发、刷算法、做毕设">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="OCT SKY">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/03/09/pytricks-3/" class="post-title-link" itemprop="url">python中的迭代器</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-03-09 16:52:41 / 修改时间：16:54:39" itemprop="dateCreated datePublished" datetime="2020-03-09T16:52:41+08:00">2020-03-09</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/python-tricks/" itemprop="url" rel="index"><span itemprop="name">python tricks</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/python-tricks/python%E8%BF%9B%E9%98%B6/" itemprop="url" rel="index"><span itemprop="name">python进阶</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h4 id="优雅的for-in循环内部如何工作？"><a href="#优雅的for-in循环内部如何工作？" class="headerlink" title="优雅的for-in循环内部如何工作？"></a>优雅的<strong>for-in</strong>循环内部如何工作？</h4><blockquote>
+<p>在Python中使用迭代器协议，只要对象支持<strong>iter</strong>和<strong>next</strong>双下划线方法，就能使用for-in循环</p>
+</blockquote>
+<h4 id="编写支持迭代器协议的Python类"><a href="#编写支持迭代器协议的Python类" class="headerlink" title="编写支持迭代器协议的Python类"></a>编写支持迭代器协议的Python类</h4><p><strong>无限迭代</strong><br>实现一个可以通过<strong>for-in</strong>循环迭代的类<strong>Repeater</strong><br>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/03/09/pytricks-3/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/09/pytricks-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="songqing-li">
+      <meta itemprop="description" content="常用的编程语言Python、C++，最近在忙的事WEB后端开发、刷算法、做毕设">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="OCT SKY">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/03/09/pytricks-2/" class="post-title-link" itemprop="url">python中的上下文管理器和with语句</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-03-09 16:42:37 / 修改时间：16:47:19" itemprop="dateCreated datePublished" datetime="2020-03-09T16:42:37+08:00">2020-03-09</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/python-tricks/" itemprop="url" rel="index"><span itemprop="name">python tricks</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/python-tricks/python%E8%BF%9B%E9%98%B6/" itemprop="url" rel="index"><span itemprop="name">python进阶</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><strong>引入：</strong><br>打开一个文件并写入‘hello, world’，可用代码一和代码二实现：<br>代码一：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">f = open(<span class="string">"hello.txt"</span>, <span class="string">'w'</span>)</span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">	f.write(<span class="string">'hello, world'</span>)</span><br><span class="line"><span class="keyword">finally</span>:</span><br><span class="line">	f.close()</span><br></pre></td></tr></table></figure><br>代码二：<br><strong>with</strong>语句通过在上下文管理器中封装<strong>try…finally</strong>语句的标准用法来简化异常处理<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> open(<span class="string">'hello.txt'</span>, <span class="string">'w'</span>) <span class="keyword">as</span> f:</span><br><span class="line">	f.write(<span class="string">'hello, world'</span>)</span><br></pre></td></tr></table></figure><br>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/03/09/pytricks-2/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/08/pytricks-1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -205,7 +536,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="JULY SKY">
+      <meta itemprop="name" content="OCT SKY">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -219,10 +550,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-03-08 18:43:42 / 修改时间：21:13:27" itemprop="dateCreated datePublished" datetime="2020-03-08T18:43:42+08:00">2020-03-08</time>
+              <time title="创建时间：2020-03-08 18:43:42" itemprop="dateCreated datePublished" datetime="2020-03-08T18:43:42+08:00">2020-03-08</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-03-09 16:47:06" itemprop="dateModified" datetime="2020-03-09T16:47:06+08:00">2020-03-09</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
@@ -230,6 +567,10 @@
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
                   <a href="/categories/python-tricks/" itemprop="url" rel="index"><span itemprop="name">python tricks</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/python-tricks/python%E8%BF%9B%E9%98%B6/" itemprop="url" rel="index"><span itemprop="name">python进阶</span></a>
                 </span>
             </span>
 
@@ -285,7 +626,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="JULY SKY">
+      <meta itemprop="name" content="OCT SKY">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -415,20 +756,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">2</span>
+          <span class="site-state-item-count">6</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-count">2</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-count">5</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
